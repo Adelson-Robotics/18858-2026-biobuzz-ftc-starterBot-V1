@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Alliance;
 /**
  * Match Auto 1 on the red side. Only the alliance lives here; the routine is in MatchAuto1.
  */
-@Autonomous(name = "Match Auto 1 Red")
+@Autonomous(name = "Red_Flower_Pause")
 public class RedMatchAuto1 extends MatchAuto1 {
 
     @Override

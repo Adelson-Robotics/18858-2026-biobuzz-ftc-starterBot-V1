@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Alliance;
  * top wall, nudge to (102.611, 130.686), aim at the blue upper cell, strafe to (127.5, 130.686), then drive down to
  * park at (127.5, 47.05).
  */
-@Autonomous(name = "Match Auto 2 Blue")
+@Autonomous(name = "Blue_NoPause")
 public class BlueMatchAuto2 extends MatchAuto2 {
 
     @Override

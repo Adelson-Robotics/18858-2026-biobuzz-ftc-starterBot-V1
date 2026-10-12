@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.match;
 
+import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.api.PoseFactory;
@@ -7,13 +9,20 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 
 /**
- * Match Auto 1: starts with 4 balls and shoots them from the starting pose with the same aim-and-shoot as the
- * TeleOp's aim trigger (see aimAndShootCommand()), then pulls away from the wall and strafes into the parking
- * square. The start heading already faces the cell, so aiming barely turns it (90 deg on red, 270 deg on blue). Each
+ * Match Auto 1: waits for the alliance partner to shoot, then shoots its 4 balls from the starting pose with the same
+ * aim-and-shoot as the TeleOp's aim trigger (see aimAndShootCommand()), then pulls away from the wall and strafes
+ * into the parking square. The start heading already faces the cell, so aiming barely turns it (90 deg on red, 270 deg on blue). Each
  * drive leg finishes only once the robot is at its target pose (see Drivetrain's followPathCommand()).
  * Not listed on the Driver Station itself: RedMatchAuto1 and BlueMatchAuto1 choose the alliance.
  */
 public abstract class MatchAuto1 extends MatchAutoBase {
+    // =====================================================================================
+    // CONSTANTS (only this class uses these; shared ones stay in RobotConstants)
+    // =====================================================================================
+    // How long it sits still at the start before doing anything, so an alliance partner with its own auto can take
+    // its shots first.
+    private static final double AUTO_1_WAIT_FOR_PARTNER_SECONDS = 15.0;
+
     // Creates poses from (x, y, heading) with the heading given in degrees
     private static final PoseFactory POSE_FACTORY = PoseFactory.degrees();
 
@@ -46,7 +55,7 @@ public abstract class MatchAuto1 extends MatchAutoBase {
     }
 
     /**
-     * Shoot from the start, pull off the wall, then strafe to park.
+     * Wait for the partner, shoot from the start, pull off the wall, then strafe to park.
      *
      * @param allianceStartPose this alliance's start pose
      * @return the routine
@@ -56,6 +65,9 @@ public abstract class MatchAuto1 extends MatchAutoBase {
         Pose leaveWallPose = forAlliance(RED_LEAVE_WALL_POSE);
         Pose parkingPose = forAlliance(RED_PARKING_POSE);
         return sequential(
+                markStep("waitForPartner", allianceStartPose),
+                instant(() -> robot.drivetrain.stop()), // sit still against the wall
+                waitMs(AUTO_1_WAIT_FOR_PARTNER_SECONDS * 1000.0),
                 markStep("aimAndShoot", null), // the target heading comes from the shot, not a fixed pose
                 aimAndShootCommand(),
                 markStep("leaveWall", leaveWallPose),

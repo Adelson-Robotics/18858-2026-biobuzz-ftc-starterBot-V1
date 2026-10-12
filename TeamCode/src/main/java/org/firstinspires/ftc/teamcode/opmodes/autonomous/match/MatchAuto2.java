@@ -1,28 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous.match;
 
-import static com.pedropathing.ivy.commands.Commands.instant;
-import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 
-
 /**
- * Match Auto 2, from the bottom wall: waits for the alliance partner to shoot, nudges off the wall, aims and shoots
- * (as if the TeleOp's aim trigger were held), turns back square, then strafes over and drives up the side to park.
+ * Match Auto 2, from the bottom wall: starts right away (no wait for the partner), nudges off the wall, aims and
+ * shoots (as if the TeleOp's aim trigger were held), turns back square, then strafes over and drives up the side to
+ * park.
  * Each drive leg finishes only once the robot is at its target pose (see Drivetrain's followPathCommand()).
  * Not listed on the Driver Station itself: RedMatchAuto2 and BlueMatchAuto2 choose the alliance.
  */
 public abstract class MatchAuto2 extends MatchAutoBase {
-    // =====================================================================================
-    // CONSTANTS (only this class uses these; shared ones stay in RobotConstants)
-    // =====================================================================================
-    // How long it sits still at the start before doing anything, so an alliance partner with its own auto can take
-    // its shots first.
-    private static final double AUTO_2_WAIT_FOR_PARTNER_SECONDS = 15.0;
-
     // Creates poses from (x, y, heading) with the heading given in degrees
     private static final PoseFactory POSE_FACTORY = PoseFactory.degrees();
 
@@ -58,7 +49,7 @@ public abstract class MatchAuto2 extends MatchAutoBase {
     }
 
     /**
-     * Wait, nudge 2 in off the wall, aim and shoot, turn back to the start heading, strafe over, drive up to park.
+     * Nudge 2 in off the wall, aim and shoot, turn back to the start heading, strafe over, drive up to park.
      *
      * @param allianceStartPose this alliance's start pose
      * @return the routine
@@ -69,9 +60,6 @@ public abstract class MatchAuto2 extends MatchAutoBase {
         Pose sidePose = forAlliance(RED_SIDE_POSE);
         Pose parkingPose = forAlliance(RED_PARKING_POSE);
         return sequential(
-                markStep("waitForPartner", allianceStartPose),
-                instant(() -> robot.drivetrain.stop()), // sit still against the wall
-                waitMs(AUTO_2_WAIT_FOR_PARTNER_SECONDS * 1000.0),
                 markStep("nudgeOffWall", shootPose),
                 robot.drivetrain.followPathCommand(straightPath(allianceStartPose, shootPose)),
                 markStep("aimAndShoot", null), // the target heading comes from the shot, not a fixed pose

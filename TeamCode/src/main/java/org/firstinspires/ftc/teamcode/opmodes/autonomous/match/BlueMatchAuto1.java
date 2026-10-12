@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Alliance;
  * the bottom wall, shooter toward the blue lower cell), pull away to (82.293, 26.023), then strafe to park at
  * (128.8, 23.58).
  */
-@Autonomous(name = "Match Auto 1 Blue")
+@Autonomous(name = "Blue_Flower_Pause")
 public class BlueMatchAuto1 extends MatchAuto1 {
 
     @Override

@@ -31,10 +31,10 @@ public class ShotTableTest {
      */
     @Test
     public void midpointsInterpolateLinearly() {
-        assertEquals(2412.5, shotTable.rpmAt(43.5), RPM_EPSILON);  // 2450 -> 2375
-        assertEquals(2395.0, shotTable.rpmAt(46.5), RPM_EPSILON);  // 2375 -> 2415
-        assertEquals(2425.0, shotTable.rpmAt(50.0), RPM_EPSILON);  // 2415 -> 2435
-        assertEquals(2467.5, shotTable.rpmAt(57.2), RPM_EPSILON);  // 2435 -> 2500
+        assertEquals(2432.5, shotTable.rpmAt(43.5), RPM_EPSILON);  // 2470 -> 2395
+        assertEquals(2415.0, shotTable.rpmAt(46.5), RPM_EPSILON);  // 2395 -> 2435
+        assertEquals(2445.0, shotTable.rpmAt(50.0), RPM_EPSILON);  // 2435 -> 2455
+        assertEquals(2487.5, shotTable.rpmAt(57.2), RPM_EPSILON);  // 2455 -> 2520
     }
 
     /**
@@ -42,8 +42,8 @@ public class ShotTableTest {
      */
     @Test
     public void doesNotExtrapolatePastEnds() {
-        assertEquals(2450.0, shotTable.rpmAt(30.0), RPM_EPSILON);
-        assertEquals(2500.0, shotTable.rpmAt(80.0), RPM_EPSILON);
+        assertEquals(2470.0, shotTable.rpmAt(30.0), RPM_EPSILON);
+        assertEquals(2520.0, shotTable.rpmAt(80.0), RPM_EPSILON);
     }
 
     /**

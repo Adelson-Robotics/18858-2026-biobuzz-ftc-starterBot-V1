@@ -81,7 +81,8 @@ public final class RobotConstants {
     // speed up/down during TeleOp; once a good value is found from telemetry, copy it here.
     // Held with setVelocity(), so it stays the same as the battery drains. Keep it comfortably below
     // the motor's free speed (6000 RPM) so the controller has headroom on a low battery.
-    public static final double SHOOTER_TARGET_RPM = 2425.0;
+    // Raised 20 RPM on 10-10 (was 2425) along with the shot table, as shots weren't getting enough height.
+    public static final double SHOOTER_TARGET_RPM = 2445.0;
 
     // The adjusted target RPM is kept within these limits. The max is the motor's free speed; above it
     // the wheel can never reach the target, so the indexer would never feed.
