@@ -1,3 +1,7 @@
+## CODING PLAYBOOK
+https://adelson-robotics.github.io/18858-2026-biobuzz-ftc-starterBot-V1/BioBuzz-Playbook.html
+
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the BIOBUZZ (2026-2027) competition season.
