@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BioBuzz Code Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one readable column (~70ch) with a sticky step index on the left at wide widths; stacks on phones.
+   Color: hive charcoal ink, honey accent for steps, teal for "from our robot" lessons, rose for watch-outs. */
+:root {
+  --bg: #f5f5f1;
+  --surface: #ffffff;
+  --ink: #1d2228;
+  --muted: #59626d;
+  --line: #e1e2dc;
+  --honey: #a8680c;
+  --honey-soft: #fbf0d9;
+  --teal: #0d6e66;
+  --teal-soft: #e2f3f0;
+  --rose: #a33b3b;
+  --rose-soft: #fbe9e7;
+  --code-bg: #f0efe9;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171b; --surface: #1c2025; --ink: #e7e9ec; --muted: #a2aab4; --line: #2c3239;
+    --honey: #e9ad45; --honey-soft: #2c2414; --teal: #57cfc1; --teal-soft: #0f2c29;
+    --rose: #f09a92; --rose-soft: #331c1b; --code-bg: #23282e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14171b; --surface: #1c2025; --ink: #e7e9ec; --muted: #a2aab4; --line: #2c3239;
+  --honey: #e9ad45; --honey-soft: #2c2414; --teal: #57cfc1; --teal-soft: #0f2c29;
+  --rose: #f09a92; --rose-soft: #331c1b; --code-bg: #23282e; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.65;
+  padding-inline: 16px; padding-block: 0 64px;
+}
+a { color: var(--teal); text-underline-offset: 3px; }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--honey); outline-offset: 2px; border-radius: 4px; }
+
+.page { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 40px; }
+@media (min-width: 980px) { .page { grid-template-columns: 230px minmax(0, 1fr); } }
+
+.masthead { grid-column: 1 / -1; padding-block: 48px 8px; border-bottom: 1px solid var(--line); }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--honey); margin: 0 0 10px; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.05; margin: 0 0 14px; text-wrap: balance; letter-spacing: -0.01em; }
+.lede { font-size: 1.2rem; color: var(--muted); max-width: 62ch; margin: 0 0 24px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 0.92rem; color: var(--muted); padding-bottom: 24px; }
+.meta b { color: var(--ink); }
+
+nav.index { display: none; }
+@media (min-width: 980px) {
+  nav.index { display: block; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); align-self: start; max-height: calc(100vh - 40px); overflow-y: auto; padding-top: 28px; font-size: 0.92rem; }
+}
+nav.index p { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 6px; }
+nav.index ol, nav.index ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+nav.index a { display: block; padding: 3px 8px; border-radius: 6px; color: var(--ink); text-decoration: none; }
+nav.index a:hover { background: var(--honey-soft); }
+nav.index .num { font-family: var(--font-mono); color: var(--honey); display: inline-block; width: 1.6em; }
+
+.contents-mobile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+@media (min-width: 980px) { .contents-mobile { display: none; } }
+.contents-mobile summary { font-weight: 700; cursor: pointer; }
+.contents-mobile ol { margin: 8px 0 0; padding-left: 1.4em; }
+
+main { min-width: 0; max-width: 72ch; padding-top: 28px; }
+section { scroll-margin-top: 20px; }
+h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 3.4vw, 2.1rem); line-height: 1.15; margin: 64px 0 12px; text-wrap: balance; }
+h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; margin: 32px 0 8px; text-wrap: balance; }
+h4 { font-size: 1.02rem; margin: 22px 0 6px; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 16px; padding-left: 1.35em; }
+li { margin-bottom: 6px; }
+li > ul, li > ol { margin-top: 6px; }
+.part-label { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 72px 0 -40px; padding-top: 18px; border-top: 2px solid var(--ink); }
+
+.step-head { display: flex; align-items: baseline; gap: 14px; margin: 64px 0 6px; }
+.step-head h2 { margin: 0; }
+.step-num { font-family: var(--font-mono); font-weight: 600; font-size: 0.85rem; color: var(--honey); background: var(--honey-soft); border-radius: 999px; padding: 3px 11px; white-space: nowrap; flex: none; position: relative; top: -4px; }
+.goal { color: var(--muted); font-size: 1.08rem; margin-bottom: 18px; }
+
+ol.substeps { list-style: none; padding: 0; display: grid; gap: 10px; margin-bottom: 20px; }
+ol.substeps > li { position: relative; padding: 12px 14px 12px 52px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin: 0; }
+ol.substeps > li::before { content: attr(data-n); position: absolute; left: 12px; top: 12px; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--honey); }
+ol.substeps > li > :last-child { margin-bottom: 0; }
+
+.takeaway, .watch, .tip, .next { border-radius: 10px; padding: 14px 16px; margin: 18px 0; }
+.takeaway { background: var(--teal-soft); border-left: 4px solid var(--teal); }
+.watch { background: var(--rose-soft); border-left: 4px solid var(--rose); }
+.tip { background: var(--honey-soft); border-left: 4px solid var(--honey); }
+.next { background: var(--surface); border: 1px dashed var(--honey); }
+.callout-label { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 6px; display: block; }
+.takeaway .callout-label { color: var(--teal); }
+.watch .callout-label { color: var(--rose); }
+.tip .callout-label, .next .callout-label { color: var(--honey); }
+.takeaway ul, .watch ul, .tip ul, .next ul { margin-bottom: 0; }
+.takeaway > :last-child, .watch > :last-child, .tip > :last-child, .next > :last-child { margin-bottom: 0; }
+
+code { font-family: var(--font-mono); font-size: 0.86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+pre { background: var(--code-bg); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 0.84rem; line-height: 1.55; margin: 0 0 18px; }
+pre code { background: none; padding: 0; font-size: inherit; overflow-wrap: normal; }
+.code-caption { font-size: 0.85rem; color: var(--muted); margin: -10px 0 18px; }
+
+.ask { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 10px; padding: 12px 16px; margin: 0 0 12px; }
+.ask p.label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+.ask blockquote { margin: 0; font-style: italic; }
+
+.table-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.94rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: none; }
+td code { white-space: nowrap; }
+
+.cycle { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; margin: 18px 0 22px; padding: 0; list-style: none; }
+.cycle li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 0; font-size: 0.92rem; }
+.cycle b { display: block; font-family: var(--font-display); font-size: 1rem; }
+.cycle span { color: var(--muted); font-size: 0.85rem; }
+
+.template { background: var(--surface); border: 2px solid var(--ink); border-radius: 12px; padding: 18px 20px; margin: 20px 0; }
+.template h4 { margin-top: 0; font-family: var(--font-display); font-size: 1.15rem; }
+.template dl { display: grid; gap: 12px; margin: 0; }
+.template dt { font-weight: 700; }
+.template dt .letter { font-family: var(--font-mono); color: var(--honey); margin-right: 6px; }
+.template dd { margin: 2px 0 0; color: var(--muted); }
+
+.compare { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 16px 0 22px; }
+@media (min-width: 720px) { .compare { grid-template-columns: 1fr 1fr; } }
+.compare > div { min-width: 0; border-radius: 10px; padding: 14px 16px; border: 1px solid var(--line); background: var(--surface); }
+.compare .bad { border-top: 4px solid var(--rose); }
+.compare .good { border-top: 4px solid var(--teal); }
+.compare p.label { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+.compare .bad p.label { color: var(--rose); }
+.compare .good p.label { color: var(--teal); }
+.compare blockquote { margin: 0; font-style: italic; }
+
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 0 0 20px; overflow-x: auto; }
+.diagram pre.mermaid { background: none; margin: 0; padding: 0; text-align: center; }
+
+dl.glossary { display: grid; grid-template-columns: 1fr; gap: 4px 20px; }
+@media (min-width: 640px) { dl.glossary { grid-template-columns: max-content minmax(0, 1fr); } }
+dl.glossary dt { font-weight: 700; }
+dl.glossary dd { margin: 0 0 10px; color: var(--muted); }
+
+.tree { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 8px; margin: 0 0 16px; font-family: var(--font-mono); font-size: 0.86rem; }
+.tree-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 3px 8px; border-left: 2px solid transparent; }
+.tree-row.d1 { margin-left: 18px; border-left-color: var(--line); }
+.tree-row.d2 { margin-left: 40px; border-left-color: var(--line); }
+.tree-row.d3 { margin-left: 62px; border-left-color: var(--line); }
+.tree-name { font-weight: 600; color: var(--honey); }
+.tree-name.file { color: var(--ink); font-weight: 400; }
+.tree-note { font-family: var(--font-body); font-size: 0.86rem; color: var(--muted); }
+@media (max-width: 480px) { .tree-row.d1 { margin-left: 10px; } .tree-row.d2 { margin-left: 22px; } .tree-row.d3 { margin-left: 34px; } }
+
+footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.92rem; }
+</style>
+
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">FTC Team BioBuzz · 2026–27 season</p>
+    <h1>BioBuzz Code Playbook</h1>
+    <p class="lede">The steps we followed to code our robot, in order, and how to use the same steps on any robot. Our shooter robot is the example throughout; your next one might be a catapult.</p>
+    <div class="meta">
+      <span><b>Example robot:</b> the <code>freshStart</code> code (drivetrain, intake, flywheel shooter, indexer, camera)</span>
+      <span><b>Tools:</b> FTC SDK · Pedro Pathing · Ivy · Claude Code</span>
+      <span><b>Status:</b> season still going</span>
+    </div>
+  </header>
+
+  <nav class="index" aria-label="Steps">
+    <p>Start here</p>
+    <ul>
+      <li><a href="#how-to-use">How to use this</a></li>
+      <li><a href="#big-picture">How robot code is shaped</a></li>
+      <li><a href="#folders">Folder layout</a></li>
+      <li><a href="#plan-robot">Plan your robot first</a></li>
+      <li><a href="#markdown">Markdown files for Claude</a></li>
+    </ul>
+    <p>The steps</p>
+    <ol>
+      <li><a href="#step-0"><span class="num">0</span>Tools and rules</a></li>
+      <li><a href="#step-1"><span class="num">1</span>Drivetrain</a></li>
+      <li><a href="#step-2"><span class="num">2</span>First mechanism</a></li>
+      <li><a href="#step-3"><span class="num">3</span>Logs</a></li>
+      <li><a href="#step-4"><span class="num">4</span>Scoring mechanism</a></li>
+      <li><a href="#step-5"><span class="num">5</span>Hand-offs</a></li>
+      <li><a href="#step-6"><span class="num">6</span>Robot class</a></li>
+      <li><a href="#step-7"><span class="num">7</span>Automate scoring</a></li>
+      <li><a href="#step-8"><span class="num">8</span>Autonomous (Ivy)</a></li>
+      <li><a href="#step-9"><span class="num">9</span>Match OpModes</a></li>
+      <li><a href="#step-10"><span class="num">10</span>Limelight</a></li>
+    </ol>
+    <p>Working with AI</p>
+    <ul>
+      <li><a href="#prompts">Writing good prompts</a></li>
+      <li><a href="#habits">Habits that saved us</a></li>
+      <li><a href="#glossary">Word list</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <details class="contents-mobile">
+      <summary>Contents</summary>
+      <ol>
+        <li><a href="#how-to-use">How to use this</a></li>
+        <li><a href="#big-picture">How robot code is shaped</a></li>
+        <li><a href="#folders">Folder layout</a></li>
+        <li><a href="#plan-robot">Plan your robot first</a></li>
+        <li><a href="#markdown">Markdown files for Claude</a></li>
+        <li><a href="#step-0">Step 0 · Tools and rules</a></li>
+        <li><a href="#step-1">Step 1 · Drivetrain</a></li>
+        <li><a href="#step-2">Step 2 · First mechanism</a></li>
+        <li><a href="#step-3">Step 3 · Logs</a></li>
+        <li><a href="#step-4">Step 4 · Scoring mechanism</a></li>
+        <li><a href="#step-5">Step 5 · Hand-offs</a></li>
+        <li><a href="#step-6">Step 6 · Robot class</a></li>
+        <li><a href="#step-7">Step 7 · Automate scoring</a></li>
+        <li><a href="#step-8">Step 8 · Autonomous (Ivy)</a></li>
+        <li><a href="#step-9">Step 9 · Match OpModes</a></li>
+        <li><a href="#step-10">Step 10 · Limelight</a></li>
+        <li><a href="#prompts">Writing good prompts</a></li>
+        <li><a href="#habits">Habits that saved us</a></li>
+        <li><a href="#glossary">Word list</a></li>
+      </ol>
+    </details>
+
+    <section id="how-to-use">
+      <h2>How to use this</h2>
+      <p>This isn't a copy of our code. It's the <strong>order we built things in</strong>, the <strong>main ideas</strong> that hold the code together, and <strong>what surprised us</strong>. That works for any robot, whether it shoots, throws, lifts or stacks.</p>
+      <p>Each step has:</p>
+      <ul>
+        <li><strong>A goal:</strong> what should work when you're done.</li>
+        <li><strong>Sub-steps:</strong> do them in order. Don't skip the testing ones.</li>
+        <li><strong>"From our robot"</strong> (green boxes): real things that happened to us, as examples.</li>
+        <li><strong>"On your robot"</strong> (dashed boxes): how the same idea might look on a different robot, like a catapult.</li>
+        <li><strong>Watch outs</strong> (red boxes): mistakes that cost us time.</li>
+      </ul>
+      <p>The rule for every step: <strong>build a little, test it on the robot, then move on.</strong> If you write five things before testing any of them and something breaks, you won't know which one did it.</p>
+    </section>
+
+    <section id="big-picture">
+      <h2>How robot code is shaped</h2>
+      <p>Robot code runs in a <strong>loop</strong>. Many times every second, the robot does the same four things:</p>
+      <ol class="cycle">
+        <li><b>1. Read</b><span>the gamepad and sensors</span></li>
+        <li><b>2. Decide</b><span>what each part should do</span></li>
+        <li><b>3. Do it</b><span>set motor and servo powers</span></li>
+        <li><b>4. Write it down</b><span>one row in the log</span></li>
+      </ol>
+      <p>The code is split into pieces, and each piece has one job. This shape works for any robot:</p>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  OP["OpMode (TeleOp or Auto)"] --> R["Robot (the boss)"]
+  RC["RobotConstants"] -.-> R
+  R --> D["Drivetrain"]
+  R --> A["Mechanism A (e.g. intake)"]
+  R --> B["Mechanism B (e.g. shooter)"]
+  R --> C["Mechanism C (e.g. indexer)"]
+  OP --> L["Logger"]
+</pre>
+      </div>
+      <ul>
+        <li><strong>OpMode</strong>: the program you pick on the Driver Station, like "Match TeleOp" or an autonomous.</li>
+        <li><strong>Robot</strong>: the boss. It owns every part and makes the decisions that involve more than one part. On our robot: "only feed a ball when the shooter wheel is up to speed."</li>
+        <li><strong>Subsystems</strong> (one per mechanism): each controls only its own motors and sensors. They never talk to each other. Only the Robot tells them what to do.</li>
+        <li><strong>RobotConstants</strong>: every gamepad button in one place, plus numbers that more than one part uses.</li>
+      </ul>
+
+      <h3 id="folders">How the folders are laid out</h3>
+      <p>Every file has one home. Here's our project (everything lives inside <code>TeamCode/src/main/java/org/firstinspires/ftc/teamcode/</code>):</p>
+      <div class="tree" role="img" aria-label="Project folder structure">
+        <div class="tree-row tree-root"><span class="tree-name">teamcode/</span></div>
+        <div class="tree-row d1"><span class="tree-name file">Robot.java</span><span class="tree-note">the boss: owns every subsystem</span></div>
+        <div class="tree-row d1"><span class="tree-name file">RobotConstants.java</span><span class="tree-note">button map + shared numbers</span></div>
+        <div class="tree-row d1"><span class="tree-name file">Alliance.java</span><span class="tree-note">red or blue, and how to flip a pose</span></div>
+        <div class="tree-row d1"><span class="tree-name">subsystems/</span><span class="tree-note">one folder per mechanism</span></div>
+        <div class="tree-row d2"><span class="tree-name">drivetrain/</span><span class="tree-note">Drivetrain.java + Pedro's tuning in pedro/</span></div>
+        <div class="tree-row d2"><span class="tree-name">intake/</span><span class="tree-note">Intake.java</span></div>
+        <div class="tree-row d2"><span class="tree-name">shooter/</span><span class="tree-note">Shooter.java</span></div>
+        <div class="tree-row d2"><span class="tree-name">indexer/</span><span class="tree-note">Indexer.java, IndexerMath.java</span></div>
+        <div class="tree-row d2"><span class="tree-name">aiming/</span><span class="tree-note">ShotTable.java, the aim math</span></div>
+        <div class="tree-row d2"><span class="tree-name">vision/</span><span class="tree-note">the Limelight camera</span></div>
+        <div class="tree-row d1"><span class="tree-name">opmodes/</span><span class="tree-note">what shows up on the Driver Station</span></div>
+        <div class="tree-row d2"><span class="tree-name">teleop/</span><span class="tree-note">MatchTeleOp, DriveTest</span></div>
+        <div class="tree-row d2"><span class="tree-name">autonomous/</span></div>
+        <div class="tree-row d3"><span class="tree-name">match/</span><span class="tree-note">MatchAutoBase, routines, Red/Blue versions</span></div>
+        <div class="tree-row d3"><span class="tree-name">tests/</span><span class="tree-note">OutNBack5ft, Turn360</span></div>
+        <div class="tree-row d1"><span class="tree-name">logging/</span><span class="tree-note">CsvLog.java, the logger</span></div>
+      </div>
+      <p>Unit tests live in a matching folder under <code>TeamCode/src/test/</code>, so they run on the laptop and never go on the robot. If you aren't sure where a new file goes, ask: <em>"Where should this go in our folder structure?"</em></p>
+    </section>
+
+    <section id="plan-robot">
+      <h2>Plan your robot first</h2>
+      <p>Before writing any code, list every mechanism and answer four questions about each one. Give this list to Claude at the start: it turns into your subsystems, states and rules.</p>
+      <ol>
+        <li><strong>What hardware does it have?</strong> Motors, servos, sensors, and the names you'll give them.</li>
+        <li><strong>What can it be doing?</strong> These become its states, like IDLE, INTAKING, FIRING.</li>
+        <li><strong>How does it know it's "ready" or "done"?</strong> A sensor? A speed? A time?</li>
+        <li><strong>What can't run at the same time?</strong> These become rules in the Robot class.</li>
+      </ol>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Question</th><th>Our shooter robot</th><th>A catapult robot (example)</th></tr></thead>
+          <tbody>
+            <tr><td>Mechanisms</td><td>Drivetrain, intake, flywheel shooter, indexer, camera</td><td>Drivetrain, intake, indexer, catapult (shooting system), flower ramp</td></tr>
+            <tr><td>States</td><td>Shooter: IDLE, SHOOTING. Indexer: HOLDING, FEEDING, CORRECTING</td><td>Catapult: maybe LOADING, PULLING_BACK, ARMED, FIRING, RESETTING</td></tr>
+            <tr><td>"Ready" means</td><td>The wheel is within 45 RPM of its target speed</td><td>Maybe: the arm is pulled back to the right spot (an encoder or a switch says so)</td></tr>
+            <tr><td>Can't run together</td><td>Intake and shooter</td><td>Firing while the flower ramp is in the way</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="markdown">
+      <h2>Markdown files for Claude</h2>
+      <p>Markdown (<code>.md</code>) files are plain text with simple formatting: <code>#</code> for headings, <code>-</code> for bullet points, <code>**bold**</code> for bold. Claude reads them easily. Set these up before you write robot code. We used three kinds.</p>
+
+      <h3>1. <code>CLAUDE.md</code>: the rule book</h3>
+      <p>Put a file called <code>CLAUDE.md</code> in the top folder of your project. <strong>Claude Code reads it automatically at the start of every chat</strong>, so you don't have to repeat your rules. You don't have to write it yourself: tell Claude the rule and why, and ask it to add it. Good rules are about <strong>how the code is organized</strong>, not just how it looks.</p>
+      <div class="ask">
+        <p class="label">Ask Claude: code style</p>
+        <blockquote>"Add a Code style section to CLAUDE.md: use long, easy-to-read variable names (poseFactory, not p), give every function a Javadoc comment, and comment any line that's hard to understand."</blockquote>
+      </div>
+      <div class="ask">
+        <p class="label">Ask Claude: how subsystems and the Robot class work together</p>
+        <blockquote>"Add an Architecture section to CLAUDE.md. Every subsystem is a state machine: a State enum plus a switch in update() that sets the power every loop. Each subsystem owns its own hardware and never talks to another subsystem. Robot.java owns every subsystem and is the only place that decides which states they're in, including the robot's overall states and which mechanisms can't run together. Subsystems never read the gamepad."</blockquote>
+      </div>
+      <div class="ask">
+        <p class="label">Ask Claude: when to use command-based code</p>
+        <blockquote>"Add a Command-based section to CLAUDE.md. The default is always enum + switch. Only use Ivy commands for steps that run in order with different 'done' rules (like autonomous), for two things at once or whichever-finishes-first, or for pieces reused across several autos. TeleOp and the mechanisms stay enum + switch. 'For consistency' is not a reason to switch."</blockquote>
+      </div>
+      <div class="ask">
+        <p class="label">Ask Claude: where things go</p>
+        <blockquote>"Add to CLAUDE.md: RobotConstants holds only the whole gamepad button map and numbers more than one class uses. A number only one class uses goes in a labeled CONSTANTS block at the top of that class. Test autos go in opmodes/autonomous/tests."</blockquote>
+      </div>
+      <ul>
+        <li><strong>Be specific.</strong> "Write good code" doesn't help. "Subsystems never read the gamepad" does.</li>
+        <li><strong>Say why.</strong> Claude follows a rule better when it knows the reason.</li>
+        <li><strong>Add a rule as soon as you catch Claude doing something you don't want.</strong> "You put button logic in the Intake class. Move it to Robot, and add a rule to CLAUDE.md so it doesn't happen again."</li>
+        <li><strong>Ask Claude to check its work against it:</strong> "Does this change follow every rule in CLAUDE.md?"</li>
+      </ul>
+
+      <h3>2. Plan files: before you build</h3>
+      <p>For anything that takes more than one session, ask Claude to write a plan file first. A good plan has the steps in order, how you'll check each one, and a <strong>checklist of things you have to give Claude</strong>: measurements, names, files.</p>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Before we write any code for the catapult, write CATAPULT_PLAN.md: the steps in order, how we'll test each one on the robot, and a checklist of measurements and hardware names you need from us."</blockquote>
+      </div>
+
+      <h3>3. Status files: after every test</h3>
+      <p>Every chat with Claude starts fresh. A status file is how the next chat knows where you left off.</p>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Update CATAPULT_STATUS.md with today's test: what we tested and the log file's name, what we found (with numbers), what we changed in the code because of it, and what to do on the next test."</blockquote>
+      </div>
+      <p>Then a new chat can start with: <em>"Read CATAPULT_STATUS.md and tell me where we're at."</em></p>
+      <div class="tip">
+        <span class="callout-label">Tip</span>
+        <p>Claude Code also has <strong>memory</strong>: you can ask it to remember a decision for future chats. We used it to save "build our own flywheel speed control, but later."</p>
+      </div>
+    </section>
+
+    <p class="part-label">Part 1 · The steps, in order</p>
+
+    <!-- STEP 0 -->
+    <section id="step-0">
+      <div class="step-head"><span class="step-num">STEP 0</span><h2>Set up your tools and rules</h2></div>
+      <p class="goal">Goal: an empty project that builds, is saved on GitHub, and has rules for Claude to follow.</p>
+      <ol class="substeps">
+        <li data-n="0.1"><strong>Start from the official Pedro Pathing docs</strong> (<a href="https://pedropathing.com">pedropathing.com</a>). Their Quickstart project already has the FTC SDK and Pedro set up for you. Open it in Android Studio and make sure it builds before you change anything.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Create a new project in the 2026-2027 BIOBUZZ folder called [insert project name] and initialize the project using the Pedro Pathing GitHub here: https://github.com/Pedro-Pathing/Quickstart.git"</blockquote>
+          </div>
+        </li>
+        <li data-n="0.2"><strong>Put it on GitHub</strong> and commit. From now on, commit every time something works. That's your save point if something breaks later. (New to GitHub? See <a href="#github-basics">GitHub basics</a> below.)</li>
+        <li data-n="0.3"><strong>Write your <code>CLAUDE.md</code> file first</strong>, before any robot code. It tells Claude your rules (see <a href="#markdown">Markdown files for Claude</a> above for prompts to build it).
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Create a CLAUDE.md for this project. Rules: use long, easy-to-read variable names, give every function a Javadoc comment, each subsystem owns its own hardware, and Robot.java ties the subsystems together."</blockquote>
+          </div>
+        </li>
+        <li data-n="0.4"><strong>Add any other libraries you need</strong> (for us, Ivy for autonomous commands) by following their install guides. Build again after each one.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Add the Ivy library to this project using its install guide: [link]. Then build the project and tell me if anything broke."</blockquote>
+          </div>
+        </li>
+      </ol>
+
+      <h3 id="github-basics">GitHub basics</h3>
+      <p>GitHub keeps a copy of your code online, so the whole team shares one version and you can always go back to one that worked. You only need four words:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Word</th><th>What it means</th><th>Ask Claude</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Commit</strong></td><td>Save a snapshot of your code on <em>your</em> laptop, with a short note about what changed.</td><td>"Commit these changes with a message saying the intake works."</td></tr>
+            <tr><td><strong>Push</strong></td><td>Send your commits up to GitHub so everyone else can get them.</td><td>"Commit and push to the main branch."</td></tr>
+            <tr><td><strong>Pull</strong></td><td>Download the newest code from GitHub onto your laptop. Do this before you start working, so you have your teammates' changes.</td><td>"Pull the latest code from this repo."</td></tr>
+            <tr><td><strong>Branch</strong></td><td>A separate copy to try something risky without breaking <code>main</code>, the version the robot runs.</td><td>"Make a new branch called catapult-test."</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>A normal day: <strong>pull</strong> at the start, <strong>commit</strong> each time something works, <strong>push</strong> before you leave.</p>
+      <div class="watch">
+        <span class="callout-label">Watch out</span>
+        <ul>
+          <li><strong>Always build after a change.</strong> One evening our Java setup was broken, so nothing was being compiled, and we kept making changes that had never been checked. If Claude says it couldn't compile, fix that first.</li>
+          <li><strong>If the robot shows as "offline"</strong> or won't connect over USB, the adb tool is often stuck. Ask Claude to restart it (<code>adb kill-server</code>, then <code>adb start-server</code>).</li>
+          <li><strong>Updating the SDK can break old sample files.</strong> When we moved to SDK 12, 37 errors came from old samples. Paste the errors into Claude: they usually point at the exact file.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 1 -->
+    <section id="step-1">
+      <div class="step-head"><span class="step-num">STEP 1</span><h2>Get the drivetrain going</h2></div>
+      <p class="goal">Goal: the robot drives with the gamepad, knows where it is on the field, and can drive a path by itself.</p>
+      <p>The drivetrain comes first on every robot, because everything else depends on it. Aiming and autonomous both need the robot to know where it is, which is called <strong>localization</strong>. Our robot uses a goBILDA <strong>Pinpoint</strong> with two odometry pods (little wheels that roll on the floor and measure how far the robot moved).</p>
+      <ol class="substeps">
+        <li data-n="1.1"><strong>Set up the hardware configuration</strong> on the Driver Station: name every motor and sensor. The names in the code must match exactly.</li>
+        <li data-n="1.2"><strong>Go through the Pedro Pathing tuning guide</strong> in order. In Pedro 3 the tuners run from a web page on the robot (<code>http://192.168.43.1:10158</code> when you're on the robot's Wi-Fi):
+          <ol>
+            <li><strong>Mecanum tuner</strong>: spins one wheel at a time to check each motor's direction, and measures how fast the robot drives.</li>
+            <li><strong>Pinpoint tuner</strong>: sets up the odometry pods.</li>
+            <li><strong>Foresight tuner</strong>: tunes how the robot follows a path (how hard it pushes, brakes and turns).</li>
+          </ol>
+        </li>
+        <li data-n="1.3"><strong>Measure the pod offsets yourself</strong>: how far each pod is from the center of the robot. Measure with a ruler, or get the numbers from the robot's CAD. Don't trust the tuner's guess.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Our Pinpoint pod offsets are: x pod 6.5 in, y pod −2.5 in from the center of the robot (measured with a ruler). Put them in Pedro's Constants.java and tell me which direction is positive for each one."</blockquote>
+          </div>
+        </li>
+        <li data-n="1.4"><strong>Run a localization test.</strong> Push the robot by hand and watch x, y and heading on telemetry. Forward should make x go up, left should make y go up, and turning left should make heading go up. If one goes the wrong way, flip that direction.</li>
+        <li data-n="1.5"><strong>Drive it</strong> with a simple TeleOp. We use field-centric driving: pushing the stick forward always moves the robot away from you, no matter which way it faces.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Create a TeleOp routine called [TeleOp name] that uses field-centric driving. The routine should just let the robot drive around using the driver controls. The robot's pose should display on telemetry, and the back button on the controller should reset the robot's pose to (0, 0, 0)."</blockquote>
+          </div>
+        </li>
+        <li data-n="1.6"><strong>Test with tiny autos</strong> that each do one thing. We recommend making these two:
+          <ul>
+            <li><strong><code>OutNBack5ft</code></strong>: drives 5 ft straight out, turns 180°, then drives back to where it started. This checks that the robot drives the right distance, turns accurately, and follows a path well.</li>
+            <li><strong><code>Turn360</code></strong>: turns in place a full circle, pausing every 90°. This checks the <strong>pod offsets</strong>. If they're wrong, x and y drift while the robot turns, even though it never moved.</li>
+          </ul>
+          <p>Put them in their own folder, <code>opmodes/autonomous/tests/</code>, so test autos never get mixed up with match autos.</p>
+          <p>Mark the start spot with tape. If the robot ends on the tape and telemetry still reads close to (0, 0, 0), your tuning and offsets are good, and you can trust autonomous later. If not, these tests tell you which part to fix.</p>
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Create a test autonomous called OutNBack5ft in a folder called tests inside the autonomous folder. The robot starts at (0, 0, 0), drives forward 5 ft, pauses for 1 second, turns 180°, pauses again, then drives back to the start. Show the target pose and the actual pose on telemetry the whole time."</blockquote>
+          </div>
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Create a test autonomous called Turn360 in the autonomous/tests folder. The robot starts at (0, 0, 0) and turns in place a full 360° in 90° steps, pausing 1 second at each step. Show x, y and heading on telemetry so I can see if x and y drift while it turns."</blockquote>
+          </div>
+        </li>
+      </ol>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <ul>
+          <li><strong>Measure the pod offsets by hand.</strong> The tuner gave x = −4.83 in, y = −8.95 in. Measured with a ruler they were x = 6.5 in, y = −2.5 in. Wrong offsets make the position drift every time the robot turns.</li>
+          <li><strong>Check every direction.</strong> Our localization test showed the x pod was reversed.</li>
+          <li><strong>Pedro 3 has no "turn" command</strong>, and a path can't have zero length. To turn in place, hold the same spot with a new heading, in 90° steps.</li>
+          <li><strong>Odometry can be fooled.</strong> When our robot slammed into a wall, the pods skidded and added 33 inches of fake travel. Normal drift was about 5 inches over 3–4 minutes. Later steps deal with this.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section id="step-2">
+      <div class="step-head"><span class="step-num">STEP 2</span><h2>Add your first mechanism</h2></div>
+      <p class="goal">Goal: one simple mechanism works from the gamepad, and you've learned the pattern every other mechanism will copy.</p>
+      <p>Start with the simplest mechanism, usually the intake. You don't write it line by line. Your job is to <strong>describe the mechanism clearly</strong>, and Claude writes the code. Before you prompt, write down:</p>
+      <ol class="substeps">
+        <li data-n="2.1"><strong>What it does</strong>, in one or two plain sentences. "The intake spins rollers that pull balls into the robot."</li>
+        <li data-n="2.2"><strong>What hardware it uses</strong>: how many motors, servos and sensors, and what kind (a goBILDA motor? a continuous servo?).</li>
+        <li data-n="2.3"><strong>The exact names</strong> from the hardware configuration on the Driver Station. These must match the code.</li>
+        <li data-n="2.4"><strong>What it can be doing</strong> (its states) and <strong>which button</strong> does each one.</li>
+        <li data-n="2.5"><strong>Ask Claude to build it, then test it.</strong> If something spins the wrong way, tell Claude which part and which way.</li>
+      </ol>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Create an Intake subsystem. It spins two rollers that pull balls into the robot. Hardware: two goBILDA motors named 'intakeLeft' and 'intakeRight' in the hardware config. It should be able to stop, pull balls in, and push them out. Holding right bumper pulls in, holding left bumper pushes out, and letting go stops it. Add it to our TeleOp so I can test it. Build it and tell me how to test it."</blockquote>
+      </div>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"The intake's left roller spins backwards when I press right bumper. Fix the direction."</blockquote>
+      </div>
+      <p>Here's the kind of code you should get back. It's short because CLAUDE.md tells Claude to use our pattern:</p>
+<pre><code>public enum State { IDLE, INTAKING, OUTTAKING }
+
+public void update() {            // runs every loop
+    switch (state) {
+        case IDLE:      setPowers(0.0);  break;
+        case INTAKING:  setPowers(1.0);  break;
+        case OUTTAKING: setPowers(-1.0); break;
+    }
+}</code></pre>
+      <p class="code-caption">Our intake (<code>Intake.java</code>). This "enum + switch" shape is called a <strong>state machine</strong>. It's our default for every mechanism.</p>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <ul>
+          <li><strong>Set the power every loop</strong>, even if the state didn't change. An early version skipped the update when the state was "the same," and the intake got stuck on.</li>
+          <li><strong>When a part won't move, test the wiring first.</strong> We made a test OpMode where button A drove the motor directly and button B drove it through our code. If A works and B doesn't, the bug is in the code.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section id="step-3">
+      <div class="step-head"><span class="step-num">STEP 3</span><h2>Add logs (the step that helped most)</h2></div>
+      <p class="goal">Goal: every test run saves a file Claude can read to tell you what happened.</p>
+      <p>Telemetry is gone the moment it scrolls past. A <strong>log</strong> saves everything to a file on the robot: one row for every loop, one column for every value. <strong>We almost never read the logs ourselves.</strong> We tell Claude what we did during the test, Claude pulls the file off the robot and reads it, and we ask it questions. Almost every hard bug this season was found that way.</p>
+      <p>Do this right after your first mechanism works, before you build anything harder. We added ours later than we should have.</p>
+
+      <h3>Ask Claude to set up logging</h3>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Add a CSV logger that writes one row every loop to a file on the robot, with the OpMode name and time in the file name. It should never crash the OpMode if the file can't be written. Log the time, the robot's pose, the buttons pressed, and the intake's state and power."</blockquote>
+      </div>
+      <p>You don't need to know how to get the files off the robot. Claude does that. Your job is to tell it what happened and ask it to investigate:</p>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Our robot overshot our first shot and then undershot our second shot. Look into the logs and investigate what happened to the shooter."</blockquote>
+      </div>
+      <p>Our version is <code>logging/CsvLog.java</code>. It saves files in <code>/sdcard/logs/</code> with names like <code>MatchAuto2Red_2026-10-14_11-52-23.csv</code>.</p>
+
+      <h3>What to log</h3>
+      <p>You don't design the columns; Claude does. For every new mechanism, ask it to log <strong>what the part was told to do, what it actually did, its state, and why it made each decision</strong>. Also log the battery voltage, which helps spot hardware problems. When a test leaves you confused, ask: "What would you add to the log to figure this out next time?"</p>
+
+      <h3>How to test with logs</h3>
+      <ol class="substeps">
+        <li data-n="3.1"><strong>Ask Claude for a test procedure</strong> before you go to the field: what to do, in what order, and what should happen.</li>
+        <li data-n="3.2"><strong>Take notes while you test.</strong> "Started in the corner. At about 1:20, flipped the cells. Parked at the Red_Flower spot." Times and places help Claude find the right part of the log.</li>
+        <li data-n="3.3"><strong>Ask Claude to read the log</strong>, give it your notes, and ask specific questions.</li>
+        <li data-n="3.4"><strong>Before changing code, ask Claude to try the fix on the old log.</strong> If the new rule would have worked last time, it'll probably work next time.</li>
+      </ol>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"I just ran a test. Here's what I did: [your notes, with times]. Pull the newest log off the robot and tell me: did the robot do what it should? Was anything way off? What happened at 1:20?"</blockquote>
+      </div>
+
+      <h3>Bugs the logs found for us</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What we saw</th><th>What the log showed</th></tr></thead>
+          <tbody>
+            <tr><td>Shots paused in the middle of a volley</td><td>Each ball dipped the wheel speed, and the "ready" limits were too tight.</td></tr>
+            <tr><td>The first shot went long</td><td>The wheel overshot its target speed right after spinning up.</td></tr>
+            <tr><td>The shooter got worse later in a match</td><td>Wheel speed problems lined up exactly with a hub losing power.</td></tr>
+            <tr><td>The indexer wobbled</td><td>It crossed its target 8–16 times before settling.</td></tr>
+            <tr><td>Aiming said "too close" when it wasn't</td><td>The position was <em>inside the wall</em>, so the aim math was fine and the odometry was wrong.</td></tr>
+            <tr><td>The camera gave no data all run</td><td>Its last reading never updated: it was unplugged before the start.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <ul>
+          <li><strong>Add to the log the moment you wish you had something.</strong> Most of ours came right after a confusing test.</li>
+          <li><strong>Make silent failures loud.</strong> A whole test run was wasted because the camera was unplugged. Now a line on telemetry says so at the start.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section id="step-4">
+      <div class="step-head"><span class="step-num">STEP 4</span><h2>Add the scoring mechanism</h2></div>
+      <p class="goal">Goal: the part that scores does the same thing every time.</p>
+      <p>This is the hardest mechanism, because scoring needs to be <strong>repeatable</strong>. A shot or a throw only lands in the same place if the mechanism is in the same condition every time: the same speed, the same angle, the same pull-back.</p>
+      <ol class="substeps">
+        <li data-n="4.1"><strong>Control the thing that matters, not just the power.</strong> For a flywheel that's speed: we use the motor's velocity control, so the speed holds even as the battery drains. For an arm, it's usually position.</li>
+        <li data-n="4.2"><strong>Show the target and the actual value on telemetry</strong>, side by side. You can't tune what you can't see.</li>
+        <li data-n="4.3"><strong>Find good settings on the field.</strong> We added buttons that bump the target speed up or down 50 RPM while driving, then saved the best value in the code.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"In the TeleOp, make the right bumper raise the shooter's target speed by 50 RPM and the left bumper lower it by 50 RPM, once per press. Show the target and actual RPM on telemetry, and add both buttons to the button map in RobotConstants."</blockquote>
+          </div>
+        </li>
+        <li data-n="4.4"><strong>Decide exactly what "ready" means.</strong> Ours: start feeding once the wheel is within 45 RPM of the target, and stop if it drifts more than 90 RPM away. Two different limits stop it flickering on and off.</li>
+        <li data-n="4.5"><strong>Tune the controller</strong> (PID) by asking Claude to compare target and actual in the log.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"I shot 4 balls from the start spot. Pull the newest log and compare the target and actual wheel speed. Is it overshooting or slow to recover? Suggest new PID values and explain why."</blockquote>
+          </div>
+        </li>
+      </ol>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <ul>
+          <li><strong>Know how precise your sensor is.</strong> The hub reads our wheel speed in jumps of about 43 RPM. Limits smaller than one jump just cause flicker.</li>
+          <li><strong>Hardware problems can look like code problems.</strong> When our flywheel started overshooting, the first guess was a weak battery. The logs showed an Expansion Hub was losing power, which made it forget our controller settings. The fix was a new power cable, and sending the settings again at the start of every shot.</li>
+          <li><strong>Scoring changes the mechanism.</strong> Each ball slowed the wheel by 100–190 RPM. Plan for it.</li>
+        </ul>
+      </div>
+      <div class="next">
+        <span class="callout-label">On your robot</span>
+        <p>A catapult might be a motor pulling an arm back, held by a latch, and released by a servo. The same ideas apply:</p>
+        <ul>
+          <li>Control <strong>how far it pulls back</strong> (with an encoder or a limit switch), so every throw starts the same.</li>
+          <li>Define <strong>"armed"</strong> exactly, and only allow firing once it's armed.</li>
+          <li>Show the target and actual pull-back on telemetry.</li>
+          <li>Ask what changes from throw to throw: a stretching band, a warming motor, a low battery?</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section id="step-5">
+      <div class="step-head"><span class="step-num">STEP 5</span><h2>Connect the mechanisms (hand-offs)</h2></div>
+      <p class="goal">Goal: game pieces move from one mechanism to the next only when the next one is ready.</p>
+      <p>Most robots pass game pieces along: intake → something in the middle → scorer. Here's how it worked on ours.</p>
+      <h3>Our indexer</h3>
+      <p>Our first problem was the intake pushing balls into the shooter before the wheel was up to speed, so shots came out weak. The fix was an <strong>indexer</strong>: an Axon servo that sits between the intake and the shooter wheel and feeds balls in only when the shooter is ready.</p>
+      <ul>
+        <li><strong>It has three states.</strong> <code>HOLDING</code> (no power, the normal state), <code>FEEDING</code> (spins to push balls into the wheel), and <code>CORRECTING</code> (turns back to a rest position).</li>
+        <li><strong>A PID control holds it at a rest position.</strong> The servo has a feedback wire that reports its angle. There's a rest angle every 90°. When it's off rest, the PID turns it to the nearest one: harder when it's far away, gentler as it gets close, so it stops on the spot instead of overshooting.</li>
+        <li><strong>It corrects twice per shot:</strong> once while the shooter spins up (it gets knocked off rest while it has no power), and once after feeding stops.</li>
+        <li><strong>The Robot class decides when it feeds.</strong> The indexer doesn't know the shooter exists. <code>Robot</code> checks "is the wheel at speed?" and only then tells the indexer to feed.</li>
+        <li><strong>The PID math is in its own class</strong> (<code>IndexerMath</code>), so Claude wrote unit tests for it that run on the laptop, with no robot.</li>
+      </ul>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Create an Indexer subsystem for an Axon servo named 'indexer', with its angle feedback on an analog input named 'indexer_encoder'. States: HOLDING, FEEDING, CORRECTING. In CORRECTING, use a PID to turn it to the nearest rest angle (every 90°). Put the PID math in IndexerMath and write unit tests for it. Robot should only let it feed when the shooter is at speed."</blockquote>
+      </div>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <ul>
+          <li><strong>A wrong direction sign makes a PID fight itself.</strong> With the sign backwards, our indexer pushed <em>away</em> from rest and swung back and forth by up to 45°. The log showed which way the angle really moved.</li>
+          <li><strong>Save the rest position once and reuse it.</strong> Our auto once ended with the indexer 8° off, and the next OpMode saved that as its new zero. Now zero is saved at the first start-up and kept across OpModes.</li>
+        </ul>
+      </div>
+      <div class="next">
+        <span class="callout-label">On your robot</span>
+        <p>The catapult robot has an <strong>indexer</strong> too, plus a <strong>flower ramp</strong> that helps it. The same rule applies: the indexer only lets a piece through when the catapult is armed and ready to hold it. The flower ramp makes this trickier because it has more than one job, and that's exactly what the Robot class is for (see <a href="#step-6">Step 6</a>).</p>
+      </div>
+    </section>
+
+    <!-- STEP 6 -->
+    <section id="step-6">
+      <div class="step-head"><span class="step-num">STEP 6</span><h2>Organize: one Robot class in charge</h2></div>
+      <p class="goal">Goal: the code is easy to find your way around, and only one place decides how the parts work together.</p>
+      <p>Once you have more than two mechanisms, rules like "don't intake while scoring" start showing up everywhere. Put all of them in <strong>one</strong> place: the <code>Robot</code> class. We did this early on, then cleaned it up as the robot grew.</p>
+      <ol class="substeps">
+        <li data-n="6.1"><strong>Make <code>Robot.java</code></strong>. It creates every subsystem, and it's the only place the hardware gets set up.</li>
+        <li data-n="6.2"><strong>Move the decision rules into it</strong>: reading the gamepad, what can't run together, and when hand-offs happen.</li>
+        <li data-n="6.3"><strong>Give the robot overall states</strong> (ours: IDLE, INTAKING, OUTTAKING, SHOOTING). Each one says what every subsystem must be doing.</li>
+        <li data-n="6.4"><strong>Make <code>RobotConstants.java</code></strong> with the whole gamepad button map, so any control can be changed on one line.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Create a Robot class that owns the intake and shooter, and move the rule 'don't intake while shooting' into it. Put every gamepad button in RobotConstants. Don't change how the robot behaves."</blockquote>
+          </div>
+        </li>
+        <li data-n="6.5"><strong>Write these rules into <code>CLAUDE.md</code></strong> so Claude follows them every time.</li>
+      </ol>
+      <div class="tip">
+        <span class="callout-label">Our architecture rules (from CLAUDE.md)</span>
+        <ul>
+          <li>Each subsystem owns its own hardware. Nothing else touches it.</li>
+          <li><code>Robot</code> owns all subsystems and holds the logic that ties them together.</li>
+          <li><code>RobotConstants</code> is only for things more than one class uses. A number only one class uses goes at the top of <em>that</em> class, in a labeled CONSTANTS block.</li>
+        </ul>
+      </div>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <p>Clean up once things work, not before. Our <code>RobotConstants</code> grew to 278 lines; moving one-class numbers into their own classes brought it down to 89. Each cleanup came after a test showed the code worked.</p>
+      </div>
+      <div class="next">
+        <span class="callout-label">On your robot: the flower ramp</span>
+        <p>The catapult robot has three mechanisms that have to work together: an <strong>indexer</strong>, the <strong>catapult</strong> (the shooting system), and a <strong>flower ramp</strong>. The flower ramp has several jobs, and they depend on what the rest of the robot is doing:</p>
+        <ul>
+          <li>Near a flower, it moves so the indexer can pick up pieces more easily.</li>
+          <li>While holding pieces, it blocks them from flying out of the hopper.</li>
+          <li>While driving, it has to sit in a set position.</li>
+          <li>While shooting, it has to move out of the catapult's way.</li>
+        </ul>
+        <p>The flower ramp can't decide any of this by itself, because it doesn't know what the catapult or the drivetrain is doing. So the <strong>Robot class</strong> picks one robot state, and that state sets every subsystem's state at once:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Robot state</th><th>Flower ramp</th><th>Indexer</th><th>Catapult</th></tr></thead>
+            <tbody>
+              <tr><td><code>DRIVING</code></td><td>Driving position (keeps pieces in the hopper)</td><td>Holding</td><td>Armed or resetting</td></tr>
+              <tr><td><code>INDEXING</code> (at a flower)</td><td>Indexing position</td><td>Indexing</td><td>Armed, waiting</td></tr>
+              <tr><td><code>SHOOTING</code></td><td>Out of the way <em>first</em></td><td>Feeds once the ramp is clear</td><td>Fires once the ramp is clear</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>"Don't fire until the ramp has moved" is a rule between two subsystems, so it lives in <code>Robot</code>, not in either subsystem.</p>
+        <div class="ask">
+          <p class="label">Ask Claude</p>
+          <blockquote>"In Robot.java, add robot states DRIVING, INDEXING and SHOOTING. In each one, set the flower ramp, indexer and catapult states from this table: [paste the table]. In SHOOTING, move the flower ramp out of the way first, and only let the catapult fire once the ramp says it's clear. Log the robot state and why it's waiting."</blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 7 -->
+    <section id="step-7">
+      <div class="step-head"><span class="step-num">STEP 7</span><h2>Automate scoring</h2></div>
+      <p class="goal">Goal: one button lines the robot up, picks the right setting for where it is, and only scores when everything is ready.</p>
+      <p>On our robot, holding the trigger turns the robot to face the target, picks the shooter speed for that distance, and only feeds when it's lined up. The steps work for any scorer:</p>
+      <ol class="substeps">
+        <li data-n="7.1"><strong>Measure real scoring.</strong> From several spots, find the settings that work. Write down every measurement, and ask Claude to keep them in a comment in the code.</li>
+        <li data-n="7.2"><strong>Build a table</strong>: distance → setting. For a distance between two rows, the code blends the two (that's called interpolation). Ours is distance → RPM in <code>ShotTable.java</code>.</li>
+        <li data-n="7.3"><strong>Measure against one hive cell, then use symmetry for the rest.</strong> Every shot measurement and the whole shot table were taken against <strong>one</strong> cell: the <strong>blue hive's lower cell</strong>, which is in the lower-right quadrant of the field in the Pedro Pathing visualizer. The code stores only that cell's position, and works out the other three from it:
+          <ul>
+            <li><strong>Blue upper</strong>: flip the measured cell over the field's horizontal center line.</li>
+            <li><strong>Red upper</strong>: turn the measured cell 180° around the center of the field.</li>
+            <li><strong>Red lower</strong>: flip red upper over the horizontal center line.</li>
+          </ul>
+          <p>The distances are the same by symmetry, so one shot table works for all four cells.</p>
+          <div class="watch">
+            <span class="callout-label">Watch out</span>
+            <p><strong>Write down exactly which cell and which quadrant you measured in</strong>, in the code and in your prompt. "The hive" isn't enough. If Claude guesses the wrong one, the flip puts every other target in the wrong place, and aiming is off on the whole field.</p>
+          </div>
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"All our shot measurements were taken against the blue hive's lower cell, in the lower-right quadrant of the Pedro Pathing visualizer, at (81.45, 56.06). Store only that cell. Work out blue upper by flipping it over the field's horizontal center line, red upper by turning it 180° around the field center, and red lower by flipping red upper. Write unit tests that check all four positions."</blockquote>
+          </div>
+        </li>
+        <li data-n="7.4"><strong>Unit test the math</strong> on your laptop. Ask Claude to write the tests.</li>
+        <li data-n="7.5"><strong>Wire it to one button</strong>, and only allow scoring when every condition is met. Ours: facing within 3°, in range, wheel at speed.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Here are my shot measurements: [distance → RPM list]. Build a ShotTable that blends between rows, write unit tests for it, and keep my measurements in a comment."</blockquote>
+          </div>
+        </li>
+      </ol>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <ul>
+          <li><strong>Trust your measurements over a neat line.</strong> Our speed table dips in the middle: up close, the ball needs extra speed to clear the edge of the target. The code says "Don't smooth it into a line."</li>
+          <li><strong>Tune in small steps, and write down why.</strong> We lowered every row by 25 RPM when shots went high, then raised them by 20 when they came up short. Each change is noted next to the numbers.</li>
+          <li><strong>Always keep a manual backup.</strong> One button scores at a fixed setting with no aiming, for when the position is wrong.</li>
+        </ul>
+      </div>
+      <div class="next">
+        <span class="callout-label">On your robot</span>
+        <p>For a catapult, the table might be distance → pull-back amount (or launch angle). The rest is the same: measure, build a table, test the math, keep a manual backup.</p>
+      </div>
+    </section>
+
+    <!-- STEP 8 -->
+    <section id="step-8">
+      <div class="step-head"><span class="step-num">STEP 8</span><h2>Autonomous with Ivy commands</h2></div>
+      <p class="goal">Goal: an autonomous that runs a list of steps in order, where each step waits until it's really done.</p>
+      <h3>First: how the auto files are organized</h3>
+      <p>Before writing any routine, set up three layers. This way you never write the same code twice, and you never write a separate red and blue version of a routine.</p>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  BASE["MatchAutoBase (one main auto class)"] --> R1["MatchAuto1 (routine: wait for partner)"]
+  BASE --> R2["MatchAuto2 (routine: shoot right away)"]
+  R1 --> RED1["RedMatchAuto1"]
+  R1 --> BLUE1["BlueMatchAuto1"]
+  R2 --> RED2["RedMatchAuto2"]
+  R2 --> BLUE2["BlueMatchAuto2"]
+</pre>
+      </div>
+      <ol>
+        <li><strong>One main auto class</strong> (ours is <code>MatchAutoBase</code>). Everything every auto needs goes here, once: creating the robot, start-up checks, logging, the scoring command, and the <code>forAlliance()</code> helper.</li>
+        <li><strong>Routines built on top of it</strong> (<code>MatchAuto1</code>, <code>MatchAuto2</code>). Each one only lists its own steps and poses. Every pose is written for the <strong>red</strong> side.</li>
+        <li><strong>An alliance wrapper for each routine</strong> (<code>RedMatchAuto1</code>, <code>BlueMatchAuto1</code>, …). Each one is a few lines: an <code>alliance()</code> function that returns <code>RED</code> or <code>BLUE</code>. These are the only ones that show up on the Driver Station.</li>
+      </ol>
+      <p><strong>How the alliance works:</strong> the field is symmetric, so blue's spots are red's spots turned 180° around the center of the field. Every pose in a routine goes through <code>forAlliance()</code>, which leaves it alone on red and turns it on blue. The auto also saves the alliance, so the TeleOp after it knows which side it's on without the driver choosing.</p>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Create a main autonomous class called MatchAutoBase that every match auto extends. It sets up the robot, logging and start-up checks, and has an alliance() function that each auto fills in with RED or BLUE. Add a forAlliance() helper that takes a red-side pose and turns it 180° around the field center for blue. Then make a routine called MatchAuto1 with red-side poses, and RedMatchAuto1 and BlueMatchAuto1 wrappers that only pick the alliance."</blockquote>
+      </div>
+      <div class="ask">
+        <p class="label">Ask Claude</p>
+        <blockquote>"Add a new routine MatchAuto3, built on MatchAutoBase, that drives from the start to [pose], shoots, then parks at [pose]. Add red and blue wrappers named Red_Auto3 and Blue_Auto3."</blockquote>
+      </div>
+
+      <h3>Why Ivy</h3>
+      <p>A state machine is great for one mechanism. An autonomous is different: it's a <strong>list of steps</strong>, and each step has its own "done" rule (arrived at a spot, finished scoring, a timer ran out). For that we use <strong>Ivy</strong>, a command library made for Pedro Pathing.</p>
+      <h3>The Ivy building blocks we use</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Block</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>sequential(a, b, c)</code></td><td>Do a, then b, then c.</td></tr>
+            <tr><td><code>race(a, b)</code></td><td>Run both at once and stop when either one finishes, for example "aim until ready, or give up after 3 seconds."</td></tr>
+            <tr><td><code>waitUntil(...)</code></td><td>Wait until something is true.</td></tr>
+            <tr><td><code>waitMs(...)</code></td><td>Wait a set time.</td></tr>
+            <tr><td><code>instant(...)</code></td><td>Do one thing right away, like stopping the drivetrain.</td></tr>
+          </tbody>
+        </table>
+      </div>
+<pre><code>return sequential(
+    markStep("nudgeOffWall", shootPose),
+    robot.drivetrain.followPathCommand(straightPath(startPose, shootPose)),
+    markStep("aimAndShoot", null),
+    aimAndShootCommand(),
+    markStep("park", parkingPose),
+    robot.drivetrain.followPathCommand(straightPath(shootPose, parkingPose))
+);</code></pre>
+      <p class="code-caption">A shortened version of one of our autos. <code>markStep()</code> writes the step's name into the log.</p>
+      <ol class="substeps">
+        <li data-n="8.1"><strong>Hook Ivy into the OpMode</strong>: call <code>Scheduler.reset()</code> in <code>init()</code> and <code>Scheduler.execute()</code> in <code>loop()</code>.</li>
+        <li data-n="8.2"><strong>Make "done" mean really done.</strong> Our drive commands finish only when the robot is actually at the target, not when the path is finished on paper.</li>
+        <li data-n="8.3"><strong>Test on red first, then blue.</strong> If red works and blue doesn't, the problem is in a pose that skipped <code>forAlliance()</code>.</li>
+        <li data-n="8.4"><strong>Test every leg</strong>, and ask Claude to use the log's step names to find where time went.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"I ran Red_NoPause and it took 4 seconds too long. Pull the newest log and tell me which step took the most time and why."</blockquote>
+          </div>
+        </li>
+      </ol>
+      <div class="takeaway">
+        <span class="callout-label">From our robot</span>
+        <ul>
+          <li><strong>Ivy's built-in drive commands finish too early.</strong> Ours wait until the robot has settled at the target.</li>
+          <li><strong>Always call <code>Scheduler.reset()</code> in <code>init()</code>.</strong> Otherwise leftover commands from the last OpMode would keep running.</li>
+          <li><strong>Use Ivy only where it earns its place</strong>: steps in order, two things at once, or "whichever finishes first." Mechanisms and TeleOp stay plain state machines.</li>
+          <li><strong>Plan around your alliance partner.</strong> We have one auto that waits 15 seconds so the partner can score first, and one that scores right away.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- STEP 9 -->
+    <section id="step-9">
+      <div class="step-head"><span class="step-num">STEP 9</span><h2>Match OpModes and safety checks</h2></div>
+      <p class="goal">Goal: the auto hands off smoothly to TeleOp, and drivers hear about problems before they cost points.</p>
+      <ol class="substeps">
+        <li data-n="9.1"><strong>Carry the position from auto into TeleOp</strong>, plus which alliance you're on, so the driver doesn't have to set anything.</li>
+        <li data-n="9.2"><strong>Fix the controls for each side.</strong> Our blue driver stands across the field, so their stick directions are turned 180°.</li>
+        <li data-n="9.3"><strong>Check things at INIT.</strong> Our robot checks that the start position stuck (the Pinpoint can lose one set too early) and says "Odometry OK" or "ODOMETRY ERROR."
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"At INIT, check that the start pose actually stuck, and show 'Odometry OK' or 'ODOMETRY ERROR' as the top line of telemetry."</blockquote>
+          </div>
+        </li>
+        <li data-n="9.4"><strong>Warn when something is impossible.</strong> If the position says the robot is inside a wall for 5 loops in a row, telemetry shows "ODOMETRY OFF – USE MANUAL SHOOTING." Waiting for 5 loops means one bad reading won't set it off.</li>
+        <li data-n="9.5"><strong>Keep telemetry short</strong>, with the most important line on top. Drivers only glance at it.</li>
+        <li data-n="9.6"><strong>Name OpModes so drivers can't pick the wrong one</strong>, for example <code>Red_Flower_Pause</code> and <code>Red_NoPause</code>.</li>
+      </ol>
+    </section>
+
+    <!-- STEP 10 -->
+    <section id="step-10">
+      <div class="step-head"><span class="step-num">STEP 10</span><h2>Limelight</h2></div>
+      <p class="goal">Goal: the Limelight camera fixes odometry drift, but only when its reading can be trusted.</p>
+      <p>Our robot always has a <strong>Limelight</strong> camera. It reads the AprilTags on the field and works out where the robot is, which fixes the drift the odometry builds up over a match (and the big jumps after a crash). Do this after everything else works.</p>
+      <ol class="substeps">
+        <li data-n="10.1"><strong>Ask Claude for a plan file first.</strong> Ours is <code>LIMELIGHT_VISION_PLAN.md</code>: the steps in order, and a checklist of measurements the team has to provide.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"We want to use our Limelight 3A to correct odometry using the AprilTags on the hive. Write a plan file, LIMELIGHT_VISION_PLAN.md, with the steps in order, how we'll test each one, and a checklist of everything you need from us."</blockquote>
+          </div>
+        </li>
+        <li data-n="10.2"><strong>Make a field map (<code>.fmap</code>) file.</strong> It lists every AprilTag's ID and exactly where it sits on the field. Make it from the field's CAD. Ours is <code>BIOBUZZ HIVE.fmap</code>.</li>
+        <li data-n="10.3"><strong>Upload the <code>.fmap</code> to the Limelight</strong> from its web page. With the laptop plugged into the Limelight, that's usually <code>http://limelight.local:5801</code>. With the Limelight on the robot and your laptop on the robot's Wi-Fi, try <code>http://172.29.0.1:5801</code>. If neither loads, check the Limelight docs for your model.</li>
+        <li data-n="10.4"><strong>Set it up on the web page:</strong>
+          <ul>
+            <li><strong>Where the camera is on the robot</strong>: forward/back, left/right and height from the robot's center, plus how far it tilts up. Get these from CAD.</li>
+            <li><strong>Cropping</strong>: crop the image to where tags can actually show up, so the camera doesn't waste time on the floor or on parts of the robot.</li>
+            <li><strong>The AprilTag pipeline</strong>: the game's tag family and tag size (from the CAD), with full 3D turned on.</li>
+            <li>Name it <code>limelight</code> in the Control Hub's hardware configuration.</li>
+          </ul>
+        </li>
+        <li data-n="10.5"><strong>Start with a test OpMode that only watches.</strong> It shows and logs the Limelight's position next to the odometry's, without changing anything. Drive around, stop in front of tags, and let Claude compare the two in the log.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Make a test TeleOp called LimelightCoordinateTest. It drives like our normal TeleOp, but also shows and logs the Limelight's robot position next to the odometry's position, plus every tag it sees. Don't let the Limelight change the odometry yet."</blockquote>
+          </div>
+
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"I drove around and stopped in front of the hive 6 times. Read the newest LimelightCoordinateTest log and compare the Limelight's position to odometry at each stop. When were they close, when were they far apart, and why?"</blockquote>
+          </div>
+        </li>
+        <li data-n="10.6"><strong>Decide exactly when the Limelight is allowed to update the odometry.</strong> Ours: only x and y (never heading), at most once per stop, only when the robot is still, the tags are still in the image, and all the good tags agree within 3 in.
+          <div class="ask">
+            <p class="label">Ask Claude</p>
+            <blockquote>"Using the last two logs, suggest rules for when the Limelight should correct the odometry. Replay the rules on the logs and tell me how many updates each would have made and how far off they were. Don't change the robot code until I agree."</blockquote>
+          </div>
+        </li>
+        <li data-n="10.7"><strong>Turn it on and test in a match-style run</strong>, then ask Claude to check every correction in the log: when it happened, and how far it moved the odometry.</li>
+      </ol>
+      <div class="takeaway">
+        <span class="callout-label">Limelight tips from our robot</span>
+        <ul>
+          <li><strong>Check the web page settings against the logs.</strong> CAD said the camera was tilted 45°. The logs fit 42° best, so we use 42° in the code.</li>
+          <li><strong>Our camera faces backward.</strong> Leaving yaw at 0 on the web page worked for position, but made the Limelight's heading read 180° off. We fixed that in code and left the web page alone. Write down choices like this so nobody "fixes" them later.</li>
+          <li><strong>MegaTag2 didn't work for us.</strong> It was 22 in off. Turning it off also made each loop faster (22 ms down to 16 ms).</li>
+          <li><strong>Pieces in front of the camera block it.</strong> About half the loops while shooting had no reading. The rules skip those loops instead of starting over.</li>
+          <li><strong>Facing a tag straight on can flip its angle</strong>, which made the position jump 9–23 in. We now work out position from <em>where</em> the tag is in the image, not which way it's turned.</li>
+          <li><strong>Tags on a tipped-down cell look upside down</strong> to the camera. We ignore those tags.</li>
+          <li><strong>Limits from a calm test can fail in a real match.</strong> Our "robot is still" limits came from a robot sitting completely still. While aiming and shooting it wobbles, so nothing updated until we loosened them using the match log.</li>
+          <li><strong>Check it's plugged in.</strong> Our first camera test recorded nothing at all. Now telemetry shows <code>LIMELIGHT NOT CONNECTED</code> at INIT.</li>
+        </ul>
+      </div>
+      <p>The full story is in <code>LIMELIGHT_STATUS.md</code>: a good example of a status file kept up to date after every test.</p>
+    </section>
+
+    <p class="part-label">Part 2 · Working with AI</p>
+
+
+    <section id="prompts">
+      <h2>Writing good prompts</h2>
+      <p>A prompt is what you type to Claude. Good prompts get working code the first time. Before you hit Enter, answer these questions:</p>
+      <div class="template">
+        <h4>The prompt checklist</h4>
+        <dl>
+          <dt><span class="letter">A</span>What inputs will Claude need?</dt>
+          <dd>Which files or mechanisms? The exact hardware names? Measurements, with units? The whole error message, pasted in? Your notes from the test (what you did, and when)?</dd>
+          <dt><span class="letter">B</span>How will you check that it worked?</dt>
+          <dd>Does it build? Is there a unit test? What will telemetry or the log show? What exactly will you do on the robot to test it?</dd>
+          <dt><span class="letter">C</span>What does "done" look like?</dt>
+          <dd>Describe what the robot should do, not just "fix it." "When I press A, the catapult pulls back, waits until it's armed, and only then lets me fire."</dd>
+          <dt><span class="letter">D</span>What should Claude not change?</dt>
+          <dd>"Don't touch the drivetrain." "Just explain it, don't change any code yet."</dd>
+        </dl>
+      </div>
+      <h3>Before and after</h3>
+      <div class="compare">
+        <div class="bad">
+          <p class="label">Vague</p>
+          <blockquote>"The shooter is broken, fix it."</blockquote>
+        </div>
+        <div class="good">
+          <p class="label">Clear</p>
+          <blockquote>"In TeleOp the first shot goes long, and the rest are fine. Pull the newest log off the robot and compare the target and actual wheel speed around each shot. Tell me what you find before changing any code. To test the fix, I'll shoot 4 balls from the start spot."</blockquote>
+        </div>
+      </div>
+      <div class="compare">
+        <div class="bad">
+          <p class="label">Vague</p>
+          <blockquote>"Explain this error."</blockquote>
+        </div>
+        <div class="good">
+          <p class="label">Clear</p>
+          <blockquote>"I get this error when I press INIT on DriveTest: [paste the whole error]. I just renamed the intake motor in the hardware config to 'intake'. What's wrong?"</blockquote>
+        </div>
+      </div>
+      <h3>Prompts that worked well for us</h3>
+      <ul>
+        <li><strong>"Before we do anything, let's figure out the steps we should take, in order."</strong> Get a plan before code.</li>
+        <li><strong>"What do you need from me to do this?"</strong> Let Claude tell you what's missing.</li>
+        <li><strong>"Push back on anything that doesn't make sense."</strong> Claude did, and it was right.</li>
+        <li><strong>"Explain how this works. Don't change any code."</strong> Great for learning.</li>
+        <li><strong>"Here's what I did in the test: [notes with times]. Look at the logs and tell me what happened."</strong></li>
+        <li><strong>"What would you add to the log to figure this out next time?"</strong></li>
+        <li><strong>"Write a test procedure for the next run, and add it to the status file."</strong></li>
+      </ul>
+    </section>
+
+    <section id="habits">
+      <h2>Habits that saved us</h2>
+      <ol>
+        <li><strong>Build a little, test a little.</strong> One change, one test, then commit.</li>
+        <li><strong>Make sure it compiles.</strong> Code that was never built is not done.</li>
+        <li><strong>Log it.</strong> If you ever wonder "what was it doing?", the log needed one more thing.</li>
+        <li><strong>A first theory is a guess, not a fact.</strong> "It's the battery" turned out to be a hub losing power. Ask Claude: "What would prove or disprove that?"</li>
+        <li><strong>Try new rules on old logs</strong> before trying them on the robot.</li>
+        <li><strong>Measure it yourself</strong> when it matters: offsets, distances, angles.</li>
+        <li><strong>Write down why a number is what it is</strong>, right next to it in the code.</li>
+        <li><strong>Make silent failures loud.</strong> A missing sensor or a bad position should show up on telemetry.</li>
+        <li><strong>Test the way you'll play.</strong> Settings tuned on a robot sitting still can fail during a real match.</li>
+        <li><strong>Read what Claude changed.</strong> You're the engineer. Ask it to explain anything you don't understand.</li>
+      </ol>
+    </section>
+
+    <section id="glossary">
+      <h2>Word list</h2>
+      <dl class="glossary">
+        <dt>OpMode</dt><dd>A program you choose on the Driver Station (a TeleOp or an Autonomous).</dd>
+        <dt>Loop</dt><dd>The part of an OpMode that runs over and over, many times a second.</dd>
+        <dt>Subsystem</dt><dd>One mechanism and its code, like the intake or the catapult.</dd>
+        <dt>State machine</dt><dd>A list of states (an enum) plus a switch that does the right thing for each one.</dd>
+        <dt>Telemetry</dt><dd>Text the robot shows on the Driver Station while it runs.</dd>
+        <dt>Pose</dt><dd>Where the robot is and which way it faces: x and y (inches) and heading (degrees).</dd>
+        <dt>Odometry</dt><dd>Working out the pose by measuring how far the wheels or pods have rolled.</dd>
+        <dt>Pedro Pathing</dt><dd>The library that drives the robot along paths and tracks its pose.</dd>
+        <dt>Ivy</dt><dd>A library for running commands in order, at the same time, or as a race.</dd>
+        <dt>Encoder</dt><dd>A sensor that measures how far a motor or arm has turned.</dd>
+        <dt>RPM</dt><dd>Revolutions per minute: how fast a wheel spins.</dd>
+        <dt>PID</dt><dd>A controller that keeps adjusting power to reach a target, like a speed or an angle.</dd>
+        <dt>Hysteresis</dt><dd>Using two limits (one to turn on, a bigger one to turn off) so something doesn't flicker.</dd>
+        <dt>Log (CSV)</dt><dd>A file with one row per loop and one column per value. Claude reads it for you.</dd>
+        <dt>adb</dt><dd>The tool that talks to the robot over USB, for example to pull logs off it.</dd>
+        <dt>Unit test</dt><dd>A small program that checks your math on the laptop, with no robot.</dd>
+        <dt>Markdown</dt><dd>Plain text with simple formatting. Files end in <code>.md</code>.</dd>
+      </dl>
+    </section>
+
+    <footer>
+      <p>Written for the BioBuzz programmers, October 2026, partway through the season. Our example code is the <code>freshStart</code> project. If this document and the code ever disagree, the code wins: ask Claude to explain it.</p>
+    </footer>
+  </main>
+</div>
+<!--claude-mermaid-runtime-begin:3477-->
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
+<!--claude-mermaid-runtime-end-->
+</body>
+</html>
